@@ -66,7 +66,7 @@
 
 - 大概思路?
   - 实现最简单版本的bitmap
-  - 数据结构：m个64-bit的bucket
+  - 数据结构：m个32-bit的bucket
   - 插入：（包e，带准确时间戳ts）
     - 计算h(e)%m，将对应bucket的时间戳置为ts
   - 查询：遍历整个array，将有效的bucket取出，按照经典bitmap计算
