@@ -19,9 +19,13 @@
 #### 算法（插入flowID e)
 
 - 计算哈希pos=h(e)%m
-- 假设当前时间为t，那么当前应记录的时间戳为 ts = (t%2W) / (w/127)
+- 假设当前时间为t，那么当前应记录的时间戳为 ts = floor{t / (w/127)} % 255
+  - 时间戳初始化为0xFF，表示该bucket未被使用过
 - 将L3中第pos个bucket置为ts
 - 将L3中第pos个bucket同一line里面过期的bucket置为-1
+  - 过期bucket：时间戳不在 (ts-127)~(ts-1)之间的bucket
+    - e.g.，当前时间为301：那么 174~300为为过期，其它的为过期时间戳
+    - e.g.，当前时间为67：那么 0~66 和 195~254为未过期，其它的为过期时间戳
 - 在step 3和step 4改变bucket值的时候，相应的将L2中的counter值变化
 - L2的counter值变化后，根据当前ts，统计L2中第ts个counter之前127个counter的和，更新为L1的值
 
@@ -33,14 +37,14 @@
   - L3共有m个bucket存放8-bit的时间信息：m bytes
     - m需要根据每分钟流的个数确定，因此将L3放在DRAM中
   - L2共有256个counter，每个counter存放32-bit的统计信息：256*32 = 1KBytes
-    - 通常的processor的L1-cache可达[256KB](https://www.makeuseof.com/tag/what-is-cpu-cache/)，因此可将L2放在L1-cache中
+    - 通常的processor的L1-cache有[32KB](https://www.makeuseof.com/tag/what-is-cpu-cache/)，因此可将L2放在L1-cache中
   - L1共有1个32-bit counter
     - 常量放在寄存器中
   - 因此，总的内存需求为m bytes
 - 访存需求（插入）:
   - （pos为哈希映射位置）将pos所在group（k个buckets）从内存取到L1-cache：
     - 1次内存访问
-    - L1-cache的cache line大小为32bytes，因此要求一个group不能超过32个buckets
+    - L1-cache的cache line大小为64bytes，因此要求一个group不能超过64个buckets
   - 对k个buckets逐一（or并行）比较
     - 需要k次L1-cache访问
   - 比较完成后最坏需要对L2 counter进行k次修改
