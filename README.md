@@ -69,6 +69,19 @@
   - P4 switch里64位寄存器只能使用一半作为时间戳？？（分高低位）因此使用32-bit时间戳
   - 总共 4m bytes
 
+- 资源使用表格（2 stages）：
+
+  |     Resource usage     | Total | percentage |
+  | :--------------------: | :---: | :--------: |
+  | Exact Match Input xbar |  19   |   1.24%    |
+  |        Hash Bit        |  16   |   0.32%    |
+  |     Hash Dist Unit     |   1   |   1.39%    |
+  |          SRAM          |  33   |   3.44%    |
+  |        Map RAM         |  33   |   5.73%    |
+  |       Meter ALU        |   1   |   2.08%    |
+  | Exact Match Search Bus |   2   |   1.04%    |
+  | Exact Match Result Bus |   2   |   1.04%    |
+
 - 访存（插入）：只需要修改一个bucket
 
   
