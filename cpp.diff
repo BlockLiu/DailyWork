@@ -1,0 +1,20 @@
+--- ClusterQueueOrderMap.cc	2020-01-09 16:30:27.884421800 +0800
++++ ClusterQueueOrderMapNew.cc	2020-01-09 16:30:14.010203600 +0800
+@@ -27,7 +27,7 @@
+ 	packet_t type = hdr_cmn::access(p)->ptype();
+ 	hdr_flags* hf = hdr_flags::access(p);
+ 	int qlimBytes = qlim_ * mean_pktsize_;
+-	double now = Scheduler::instance().clock();
++	int now = iph->connection();
+ 
+ 	// 1 <= queue_num <= MAX_QUEUE_NUM
+ 	queue_num_ = MAX_(MIN_(queue_num_, MAX_QUEUE_NUM), 1);
+@@ -45,7 +45,7 @@
+ 	if(type == PT_TCP && size > 0)
+ 	{
+ 		if(count_packet.find(flow_id) == count_packet.end()
+-			|| now - last_time[flow_id] > interval_msg_)
++			|| now != last_time[flow_id])
+ 		{
+ 			count_packet[flow_id] = 0;
+ 			count_byte[flow_id] = 0;
